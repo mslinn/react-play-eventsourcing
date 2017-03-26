@@ -6,7 +6,6 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.kkanojia.example.actors.UserActor.{CreateUser, UserCreationFailed, UserCreationSuccess, UserRetrievalSuccess}
 import com.kkanojia.example.actors.UserManager.RetrieveUser
-import com.kkanojia.example.actors.{UserActor, UserManager}
 import com.kkanojia.example.models.User
 import com.kkanojia.example.modules.ActorSystemInitializer
 import play.api.Logger
