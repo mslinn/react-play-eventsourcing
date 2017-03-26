@@ -1,13 +1,12 @@
 name := """react-play-eventsourcing"""
 
-version := "1.0-SNAPSHOT"
+version := "0.1.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala, SbtWeb)
 
 scalaVersion := "2.11.8"
 
 resolvers += "Eventuate Releases" at "https://dl.bintray.com/rbmhtechnology/maven"
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 
 javaOptions in Test += "-Dconfig.resource=test.conf"
 //Heroku
@@ -15,14 +14,15 @@ herokuAppName in Compile := "play-eventsourcing"
 herokuJdkVersion in Compile := "1.8"
 
 
-val akkaVersion = "2.4.7"
+val akkaVersion = "2.4.17"
+val evVer = "0.8.1"
 
 libraryDependencies ++= Seq(
   ws,
 
   //Eventuate
-  "com.rbmhtechnology" %% "eventuate-core" % "0.7.1",
-  "com.rbmhtechnology" %% "eventuate-log-leveldb" % "0.7.1",
+  "com.rbmhtechnology" %% "eventuate-core" % evVer,
+  "com.rbmhtechnology" %% "eventuate-log-leveldb" % evVer,
 
   //JSON
   "org.json4s" %% "json4s-jackson" % "3.3.0",
