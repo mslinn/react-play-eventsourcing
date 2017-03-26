@@ -1,19 +1,15 @@
 package controllers
 
 import javax.inject._
-import scala.concurrent.{ExecutionContext, Future}
-
-import com.kkanojia.example.forms.UserForm
+import com.kkanojia.example.forms.UserForm._
 import com.kkanojia.example.models.User
 import com.kkanojia.example.services.UserService
-import UserForm._
+import controllers.routes._
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization._
-
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-
-import controllers.routes._
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -21,19 +17,19 @@ import controllers.routes._
  */
 @Singleton
 class HomeController @Inject()(
-                                webJarAssets: WebJarAssets,
-                                userService: UserService,
-                                override val messagesApi: MessagesApi
-                              )(implicit exec: ExecutionContext) extends Controller with I18nSupport {
-
-  implicit val formats = DefaultFormats
-
+  webJarAssets: WebJarAssets,
+  userService: UserService,
+  override val messagesApi: MessagesApi
+)(implicit
+  exec: ExecutionContext
+) extends Controller with I18nSupport {
+  implicit val json4sFormats = DefaultFormats
 
   def index = Action { implicit request =>
     Ok(views.html.index(webJarAssets, userNameForm, userNameForm))
   }
 
-  def handleUser = Action.async { implicit request =>
+  def handleUser: Action[AnyContent] = Action.async { implicit request =>
     userNameForm.bindFromRequest.fold(
       errorForm => {
         println(userNameForm.error("user_email"))
@@ -50,7 +46,7 @@ class HomeController @Inject()(
     )
   }
 
-  def handleLogin = Action.async { implicit request =>
+  def handleLogin: Action[AnyContent] = Action.async { implicit request =>
     userNameForm.bindFromRequest.fold(
       errorForm => {
         println(userNameForm.error("user_email"))

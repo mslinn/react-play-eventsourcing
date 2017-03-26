@@ -2,7 +2,7 @@
 
 ### Scala event sourcing example.
 
-The example application uses Play 2.5 and Eventuate(https://github.com/RBMHTechnology/eventuate) for event sourcing.
+The example application uses Play 2.5 and [Eventuate](https://github.com/RBMHTechnology/eventuate) for event sourcing.
 
 The events are written to a LevelDB log.
 

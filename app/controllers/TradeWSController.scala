@@ -19,11 +19,13 @@ import play.api.libs.json.Json
 import play.api.mvc.{Controller, RequestHeader, WebSocket}
 
 @Singleton
-class TradeWSController @Inject()(@Named("userParentActor") userParentActor: ActorRef)
-                                 (implicit actorSystem: ActorSystem,
-                                  mat: Materializer,
-                                  ec: ExecutionContext) extends Controller {
-
+class TradeWSController @Inject()(
+  @Named("userParentActor") userParentActor: ActorRef
+)(implicit
+  actorSystem: ActorSystem,
+  mat: Materializer,
+  ec: ExecutionContext
+) extends Controller {
   // Use a direct reference to SLF4J
   private val logger = org.slf4j.LoggerFactory.getLogger("controllers.TradeWSController")
 
@@ -48,7 +50,7 @@ class TradeWSController @Inject()(@Named("userParentActor") userParentActor: Act
       }
 
     case rejected =>
-      logger.error(s"Request ${rejected} failed same origin check")
+      logger.error(s"Request $rejected failed same origin check")
       Future.successful {
         Left(Forbidden("forbidden"))
       }
@@ -68,7 +70,7 @@ class TradeWSController @Inject()(@Named("userParentActor") userParentActor: Act
         true
 
       case Some(badOrigin) =>
-        logger.error(s"originCheck: rejecting request because Origin header value ${badOrigin} is not in the same origin")
+        logger.error(s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin")
         false
 
       case None =>
@@ -106,7 +108,6 @@ class TradeWSController @Inject()(@Named("userParentActor") userParentActor: Act
    * @return the materialized input and output of the flow.
    */
   def createWebSocketConnections(): (ActorRef, Publisher[String]) = {
-
     // Creates a source to be materialized as an actor reference.
     val source: Source[String, ActorRef] = {
       // If you want to log on a flow, you have to use a logging adapter.

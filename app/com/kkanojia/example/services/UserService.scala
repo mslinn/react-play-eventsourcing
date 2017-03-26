@@ -1,32 +1,31 @@
 package com.kkanojia.example.services
 
 import javax.inject.Inject
-import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext, Future}
-
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
+import com.kkanojia.example.actors.UserActor.{CreateUser, UserCreationFailed, UserCreationSuccess, UserRetrievalSuccess}
+import com.kkanojia.example.actors.UserManager.RetrieveUser
 import com.kkanojia.example.actors.{UserActor, UserManager}
-import UserActor.{CreateUser, UserCreationFailed, UserCreationSuccess, UserRetrievalSuccess}
 import com.kkanojia.example.models.User
-import UserManager.RetrieveUser
-
+import com.kkanojia.example.modules.ActorSystemInitializer
 import play.api.Logger
+import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
 
-class UserService @Inject()(system: ActorSystem)(implicit ec: ExecutionContext) {
+class UserService @Inject()(implicit system: ActorSystem, ec: ExecutionContext) {
+  implicit val timeout: Timeout = 15 seconds
 
-  implicit val timeout = Timeout(15 seconds)
-
-  lazy val userManager = Await.result(system.actorSelection("user/" + UserManager.NAME).resolveOne(), timeout.duration)
+  lazy val userManager: ActorRef = ActorSystemInitializer.userManagerActorRef
 
   def createUser(email: String): Future[Option[User]] = {
-    val user = User(email)
-    userManager ? CreateUser(user) map {
+    userManager ? CreateUser(User(email)) map {
       case UserCreationSuccess(createdUser) =>
         Some(createdUser)
+
       case UserCreationFailed(cause) =>
-        Logger.error(s"Error occurred while creating user ${cause.getMessage}")
+        Logger.error(s"Error occurred while creating user ${ cause.getMessage }")
         None
     }
   }
